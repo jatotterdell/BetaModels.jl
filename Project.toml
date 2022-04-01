@@ -1,0 +1,10 @@
+name = "BetaModels"
+uuid = "397a8d29-fd26-4d6e-80f1-cd8fee01343c"
+authors = ["James Totterdell <jatotterdell@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
