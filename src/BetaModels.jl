@@ -17,7 +17,7 @@ export ℙless, ℙbest
 Return `Normal` approximation to a `Beta`. 
 No checks are made as to the adequacy of this approximation.
 """
-function Distributions.Normal(B::Beta)
+function Distributions.Normal(B::Beta{Float64})
     a, b = params(B)
     adequate =
         isapprox((a + 1.0) / (a - 1.0), 1.0, atol = 1e-1) &
