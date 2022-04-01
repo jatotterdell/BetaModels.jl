@@ -11,11 +11,18 @@ import Base: (-)
 export ℙless, ℙbest
 
 
-"""
+@doc raw"""
     Normal(B::Beta)
 
 Return `Normal` approximation to a `Beta`. 
-No checks are made as to the adequacy of this approximation.
+
+If ``B\sim\text{Beta}(a,b)`` then 
+```math
+B\approx\text{Normal}\left(\frac{a}{a+b}, \frac{ab}{(a+b)^2(a+b+1)}\right)
+```
+The approximation improves as ``a\approx b`` and for large values of ``a`` and ``b``.
+
+An improvement can be obtained by transforming the parameter, [Wise's transformation](https://www.jstor.org/stable/2332968).
 """
 function Distributions.Normal(B::Beta{Float64})
     a, b = params(B)
@@ -31,44 +38,48 @@ function Distributions.Normal(B::Beta{Float64})
 end
 
 
-"""
-    Base.:-(N::Normal{<:Real})
+@doc raw"""
+    Base.:-(X::Normal{<:Real})
 
-Return the negative of a `Normal` random variable.
+Return the negative of a `Normal` random variable, i.e. ``X \sim \text{Normal}(\mu,\sigma^2)``
+then return ``-X \sim \text{Normal}(-\mu,\sigma^2)``.
 """
-function Base.:-(N::Normal{<:Real})
-    return Normal(-location(N), scale(N))
+function Base.:-(X::Normal{<:Real})
+    return Normal(-location(X), scale(X))
 end
 
 
-"""
-    Base.:-(N1::Normal{<:Real}, N2::Normal{<:Real})
+@doc raw"""
+    Base.:-(X::Normal{<:Real}, Y::Normal{<:Real})
     
-Subtract a normal random variable `N2` from another `N1`.
+Subtract a normal random variable `Y` from another normal random variable `X` according to
+```math
+\text{Normal}(\mu, \sigma^2) - \text{Normal}(\nu, \omega^2) \sim \text{Normal}(\mu-\nu, \sigma^2+\omega^2)
+```
 """
-function Base.:-(N1::Normal{<:Real}, N2::Normal{<:Real})
-    return convolve(N1, -N2)
+function Base.:-(X::Normal{<:Real}, Y::Normal{<:Real})
+    return convolve(X, -Y)
 end
 
 
 """
-    ℙless(D1::Beta, D2::Beta; δ = 0.0, method = "approx")
+    ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx")
 
-Probability that `D1 < D2 + δ`.
+Return `ℙ(X < Y + δ)`.
 `method` may be one of 
 `"approx"` (Normal approximation), 
 `"montecarlo"` (Monte-Carlo approximation), or 
 `"numeric"` (quadrature).
 """
-function ℙless(D1::Beta, D2::Beta; δ = 0.0, method = "approx")
+function ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx")
     if method == "approx"
-        N1 = Normal(D1)
-        N2 = Normal(D2)
+        N1 = Normal(X)
+        N2 = Normal(Y)
         return cdf(N1 - N2, δ)
     elseif method == "montecarlo"
-        return mean(rand(D1, 10_000) .< rand(D2, 10_000))
+        return mean(rand(X, 10_000) .< rand(Y, 10_000))
     elseif method == "numeric"
-        f(x) = pdf(D1, x) * cdf(D2, x - δ)
+        f(x) = pdf(X, x) * cdf(Y, x - δ)
         ∫, err = quadgk(f, δ, 1)
         if err > 1e-8
             @warn "Integration error $(err)"
