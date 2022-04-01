@@ -10,4 +10,5 @@ makedocs(
     format = Documenter.HTML(prettyurls = false),
 )
 
+deploydocs(repo = "github.com/jatotterdell/BetaModels.jl.git", branch = "main")
 deploydocs(repo = "github.com/jatotterdell/BetaModels.jl.git", devbranch = "main")

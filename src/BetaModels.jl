@@ -12,7 +12,7 @@ export ℙless, ℙbest
 
 
 @doc raw"""
-    Normal(B::Beta)
+    Normal(B::Beta{Float64})
 
 Return `Normal` approximation to a `Beta`. 
 
@@ -22,7 +22,7 @@ B\approx\text{Normal}\left(\frac{a}{a+b}, \frac{ab}{(a+b)^2(a+b+1)}\right)
 ```
 The approximation improves as ``a\approx b`` and for large values of ``a`` and ``b``.
 
-An improvement can be obtained by transforming the parameter, [Wise's transformation](https://www.jstor.org/stable/2332968).
+An improvement can be obtained by transforming the parameter (not implemented), [Wise's transformation](https://www.jstor.org/stable/2332968).
 """
 function Distributions.Normal(B::Beta{Float64})
     a, b = params(B)
@@ -32,7 +32,7 @@ function Distributions.Normal(B::Beta{Float64})
     m = a / (a + b)
     v = a * b / ((a + b)^2 * (a + b + 1))
     if !adequate
-        @warn "Normal approximation to `Beta($(a), $(b))` may be poor due to small parameter value."
+        @warn "Normal approximation to `Beta($(a), $(b))` may be poor."
     end
     return Normal(m, sqrt(v))
 end
@@ -62,14 +62,15 @@ function Base.:-(X::Normal{<:Real}, Y::Normal{<:Real})
 end
 
 
-"""
+@doc raw"""
     ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx")
 
 Return `ℙ(X < Y + δ)`.
-`method` may be one of 
-`"approx"` (Normal approximation), 
-`"montecarlo"` (Monte-Carlo approximation), or 
-`"numeric"` (quadrature).
+The argument `method` may be one of:
+
+- `"approx"` (Normal approximation)
+- `"montecarlo"` (Monte-Carlo approximation) 
+- `"numeric"` (quadrature).
 """
 function ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx")
     if method == "approx"
@@ -90,7 +91,7 @@ end
 
 
 
-"""
+@doc raw"""
     ℙmax(D::Vector{Beta{Float64}}; n = 10_000)
 
 Probability that each `Beta ∈ D` is maximum via Monte Carlo simulation.
