@@ -84,7 +84,7 @@ end
 
 Probability that each `Beta ∈ D` is maximum via Monte Carlo simulation.
 """
-function ℙmax(D::Vector{Beta{Float64}}; n = 10_000, minimum = false)
+function ℙmax(D::Vector{Beta{Float64}}; n = 10_000)
     r = reduce(hcat, rand.(D, n))
     m = [x[2] for x in findmax(r, dims = 2)[2]]
     c = counts(m, 1:size(r, 2)) ./ size(r, 1)
@@ -95,9 +95,9 @@ end
 """
     ℙmin(D::Vector{Beta{Float64}}; n = 10_000)
 
-Probability that each `Beta ∈ D` is maximum via Monte Carlo simulation.
+Probability that each `Beta ∈ D` is minimum via Monte Carlo simulation.
 """
-function ℙmin(D::Vector{Beta{Float64}}; n = 10_000, minimum = false)
+function ℙmin(D::Vector{Beta{Float64}}; n = 10_000)
     r = reduce(hcat, rand.(D, n))
     m = [x[2] for x in findmin(r, dims = 2)[2]]
     c = counts(m, 1:size(r, 2)) ./ size(r, 1)
