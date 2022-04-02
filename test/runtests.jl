@@ -9,11 +9,6 @@ using Test, BetaModels
     @test ℙless(Beta(100, 100), Beta(100, 100); method = "approx") == 0.5
     @test ℙless(Beta(1, 1), Beta(1, 1); method = "numeric") == 0.5
     @test ℙless(Beta(2, 1), Beta(1, 2); method = "numeric") ≈ 5 / 6
-    @test_warn r"Integration error" ℙless(
-        Beta(100, 0.5),
-        Beta(0.5, 100);
-        method = "numeric",
-    )
     @test isapprox(ℙless(Beta(1, 1), Beta(1, 1); method = "montecarlo"), 0.5, atol = 1e-1)
     @test isapprox(ℙmax([Beta(1, 1), Beta(1, 1)]), [0.5, 0.5], atol = 1e-1)
     @test isapprox(ℙmax([Beta(2, 1), Beta(1, 2)]), [5 / 6, 1 / 6], atol = 1e-1)
