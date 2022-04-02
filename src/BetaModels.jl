@@ -63,7 +63,7 @@ end
 
 
 @doc raw"""
-    ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx")
+    ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx", n::Int = 10_000)
 
 Return `ℙ(X < Y + δ)`.
 The argument `method` may be one of:
@@ -74,7 +74,13 @@ The argument `method` may be one of:
 
 If `method = "montecarlo"` then `n` indicates the number of samples to use. 
 """
-function ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ::Real = 0.0, method = "approx", n::Int = 10_000)
+function ℙless(
+    X::Beta{Float64},
+    Y::Beta{Float64};
+    δ::Real = 0.0,
+    method = "approx",
+    n::Int = 10_000,
+)
     if method == "approx"
         N1 = Normal(X)
         N2 = Normal(Y)
