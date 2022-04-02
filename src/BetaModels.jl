@@ -8,7 +8,7 @@ using StatsBase: counts
 import Distributions: Normal
 import Base: (-)
 
-export ℙless, ℙbest
+export ℙless, ℙmax, ℙmin
 
 
 @doc raw"""
@@ -71,14 +71,16 @@ The argument `method` may be one of:
 - `"approx"` (Normal approximation)
 - `"montecarlo"` (Monte-Carlo approximation) 
 - `"numeric"` (quadrature).
+
+If `method = "montecarlo"` then `n` indicates the number of samples to use. 
 """
-function ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ = 0.0, method = "approx")
+function ℙless(X::Beta{Float64}, Y::Beta{Float64}; δ::Real = 0.0, method = "approx", n::Int = 10_000)
     if method == "approx"
         N1 = Normal(X)
         N2 = Normal(Y)
         return cdf(N1 - N2, δ)
     elseif method == "montecarlo"
-        return mean(rand(X, 10_000) .< rand(Y, 10_000))
+        return mean(rand(X, n) .< rand(Y, n))
     elseif method == "numeric"
         f(x) = pdf(X, x) * cdf(Y, x - δ)
         ∫, err = quadgk(f, δ, 1)
@@ -96,7 +98,7 @@ end
 
 Probability that each `Beta ∈ D` is maximum via Monte Carlo simulation.
 """
-function ℙmax(D::Vector{Beta{Float64}}; n = 10_000)
+function ℙmax(D::Vector{Beta{Float64}}; n::Int = 10_000)
     r = reduce(hcat, rand.(D, n))
     m = [x[2] for x in findmax(r, dims = 2)[2]]
     c = counts(m, 1:size(r, 2)) ./ size(r, 1)
@@ -109,7 +111,7 @@ end
 
 Probability that each `Beta ∈ D` is minimum via Monte Carlo simulation.
 """
-function ℙmin(D::Vector{Beta{Float64}}; n = 10_000)
+function ℙmin(D::Vector{Beta{Float64}}; n::Int = 10_000)
     r = reduce(hcat, rand.(D, n))
     m = [x[2] for x in findmin(r, dims = 2)[2]]
     c = counts(m, 1:size(r, 2)) ./ size(r, 1)

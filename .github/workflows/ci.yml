@@ -55,9 +55,9 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           file: lcov.info
-      - uses: julia-actions/julia-uploadcodecov@latest
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      # - uses: julia-actions/julia-uploadcodecov@latest
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   docs:
     name: Documentation
     runs-on: ubuntu-latest
