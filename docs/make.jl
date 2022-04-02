@@ -9,4 +9,4 @@ makedocs(
     pages = ["Home" => "index.md"],
     format = Documenter.HTML(prettyurls = false),
 )
-deploydocs(repo = "github.com/jatotterdell/BetaModels.jl.git", devbranch = "main")
+deploydocs(repo = "github.com/jatotterdell/BetaModels.jl.git")
